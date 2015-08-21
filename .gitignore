@@ -1,11 +1,37 @@
-# Build and Release Folders
+#################
+## IntelliJ
+#################
+*.iml
+*.xml
+.idea
+.idea/
+
+#################
+## Eclipse
+#################
+
+*.pydevproject
+.project
+.metadata
 bin/
-bin-debug/
-bin-release/
-
-# Other files and folders
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.classpath
 .settings/
+.loadpath
 
-# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
-# should NOT be excluded as they contain compiler settings and other important
-# information for Eclipse / Flash Builder.
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# CDT-specific
+.cproject
+
+# PDT-specific
+.buildpath
