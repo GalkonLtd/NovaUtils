@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.BufferUnderflowException;
 
 /**
  * "The real danger is not that computers will begin to think like men, but that men will begin to think like computers." – Sydney Harris
@@ -24,7 +25,7 @@ public abstract class ReadWriteFile {
     public ReadWriteFile(String filePath) {
         this.filePath = filePath;
         try {
-            this.randomAccessFile = new RandomAccessFile(filePath, "rwd");
+            this.randomAccessFile = new RandomAccessFile(filePath, "rw");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -42,6 +43,7 @@ public abstract class ReadWriteFile {
             return false;
         }
         try {
+            this.randomAccessFile.seek(0);
             this.randomAccessFile.write(buffer.toByteArray());
             return true;
         } catch (IOException e) {
@@ -60,16 +62,34 @@ public abstract class ReadWriteFile {
         }
         try {
             byte[] data = new byte[(int) new File(this.filePath).length()];
+            this.randomAccessFile.seek(0);
             this.randomAccessFile.readFully(data);
             DataBuffer buffer = DataBuffer.wrap(data);
-            this.readFromBuffer(buffer);
-            return true;
+            try {
+                this.readFromBuffer(buffer);
+                return true;
+            } catch (BufferUnderflowException e) {
+                //ignore
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
         DataBuffer buffer = DataBuffer.wrap(FileUtils.fileToByteArray(this.filePath));
-        this.readFromBuffer(buffer);
-        return true;
+        try {
+            this.readFromBuffer(buffer);
+            return true;
+        } catch (BufferUnderflowException e) {
+            //ignore
+        }
+        return false;
+    }
+
+    public void close() {
+        try {
+            this.randomAccessFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
